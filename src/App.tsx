@@ -1130,16 +1130,16 @@ export default function App() {
               ¡ESPERA UN MOMENTO! OFERTA EXCLUSIVA
             </p>
             <h2 style={{ fontSize: '28px', margin: '10px 0 15px', color: 'var(--ink)' }}>
-              ¿Te gustaría comenzar hoy por solo US$9,90?
+              ¿Te gustaría comenzar hoy por solo US$5?
             </h2>
             <p style={{ fontSize: '15px', color: 'var(--muted)', marginBottom: '20px' }}>
-              No queremos que te quedes sin tu biblioteca de los 72 Ángeles. Aprovecha esta oportunidad única de salida para llevarte la guía completa y los 8 bonos por un precio especial.
+              No queremos que te quedes sin tu biblioteca de los 72 Ángeles. Aprovecha esta oportunidad única de salida para llevarte la guía completa y los 8 bonos por un precio especial de solo US$5.
             </p>
 
             <div className="upgrade-price" style={{ fontSize: '46px', fontWeight: 'bold', color: '#896724', margin: '15px 0' }}>
-              US$9,90
+              US$5
               <span style={{ fontSize: '13px', color: 'var(--muted)', display: 'block', fontWeight: 'normal' }}>
-                Precio especial único · Acceso inmediato
+                Precio especial de salida · Convertido automáticamente a tu moneda local
               </span>
             </div>
 
@@ -1157,7 +1157,7 @@ export default function App() {
               }}
               href={getCheckoutUrl('lgvnypg2')}
             >
-              SÍ, QUIERO MI BIBLIOTECA POR US$9,90
+              SÍ, QUIERO MI BIBLIOTECA POR US$5
             </a>
 
             <button
