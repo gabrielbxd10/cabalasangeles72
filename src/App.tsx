@@ -181,19 +181,89 @@ export default function App() {
   const carouselRef2 = useRef<HTMLDivElement>(null);
   const carouselRef3 = useRef<HTMLDivElement>(null);
 
-  // Setup Hotmart tracked checkout URL
+  // Load and persist UTM parameters in sessionStorage
+  useEffect(() => {
+    try {
+      const storageKey = 'angeles-attribution-v2';
+      const allowed = /^(utm_[a-z_]+|fbclid|gclid|src|sck|xcod|ad_id|adset_id|campaign_id|placement)$/;
+      let params: Record<string, string> = {};
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(storageKey) || '{}');
+        for (const [k, v] of Object.entries(saved || {})) {
+          if (allowed.test(k) && typeof v === 'string') params[k] = v;
+        }
+      } catch {}
+
+      const visit = new URLSearchParams(window.location.search);
+      for (const [k, v] of visit.entries()) {
+        if (allowed.test(k) && v) params[k] = v;
+      }
+      sessionStorage.setItem(storageKey, JSON.stringify(params));
+    } catch {}
+  }, []);
+
+  // Meta Pixel ViewContent event after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          (window as any).fbq('track', 'ViewContent', {
+            content_name: 'Los 72 Ángeles · Guía + 8 bonos',
+            content_type: 'product',
+            content_ids: ['H107870026Q'],
+            value: 9.9,
+            currency: 'USD',
+          });
+        }
+      } catch {}
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Setup Hotmart tracked checkout URL with UTM preservation and Hotmart src/sck tracking
   const getCheckoutUrl = (offerCode = '6ng3km9t') => {
     const base = `https://pay.hotmart.com/H107870026Q?off=${offerCode}`;
     if (typeof window === 'undefined') return base;
     try {
       const url = new URL(base);
-      const searchParams = new URLSearchParams(window.location.search);
+      const storageKey = 'angeles-attribution-v2';
       const allowed = /^(utm_[a-z_]+|fbclid|gclid|src|sck|xcod|ad_id|adset_id|campaign_id|placement)$/;
-      for (const [k, v] of searchParams.entries()) {
-        if (allowed.test(k) && v) {
-          url.searchParams.set(k, v);
+      let params: Record<string, string> = {};
+
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(storageKey) || '{}');
+        for (const [k, v] of Object.entries(saved || {})) {
+          if (allowed.test(k) && typeof v === 'string') params[k] = v;
         }
+      } catch {}
+
+      const visit = new URLSearchParams(window.location.search);
+      for (const [k, v] of visit.entries()) {
+        if (allowed.test(k) && v) params[k] = v;
       }
+
+      for (const [k, v] of Object.entries(params)) {
+        if (!url.searchParams.has(k)) url.searchParams.set(k, v);
+      }
+
+      // Generate Hotmart src & sck parameters
+      if (!url.searchParams.has('src') && params.utm_source) {
+        url.searchParams.set('src', params.utm_source);
+      }
+      if (!url.searchParams.has('sck') && (params.utm_campaign || params.utm_content || params.ad_id)) {
+        const sckVal = [
+          params.utm_source,
+          params.utm_campaign,
+          params.utm_medium,
+          params.utm_content || params.ad_id,
+          params.utm_term,
+        ]
+          .map((v) => v || '')
+          .join('|')
+          .slice(0, 255);
+        url.searchParams.set('sck', sckVal);
+      }
+
       return url.toString();
     } catch {
       return base;
@@ -227,6 +297,18 @@ export default function App() {
       }
       fired = true;
       window.removeEventListener('popstate', handlePopState);
+
+      // Fire InitiateCheckout on back exit offer
+      try {
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          (window as any).fbq('track', 'InitiateCheckout', {
+            content_name: 'Biblioteca completa · Oferta de salida',
+            value: 5.0,
+            currency: 'USD',
+          });
+        }
+      } catch {}
+
       const redirectUrl = getCheckoutUrl('lgvnypg2');
       try {
         window.location.replace(redirectUrl);
@@ -1162,6 +1244,17 @@ export default function App() {
                 marginTop: '20px',
               }}
               href={getCheckoutUrl('lgvnypg2')}
+              onClick={() => {
+                try {
+                  if (typeof window !== 'undefined' && (window as any).fbq) {
+                    (window as any).fbq('track', 'InitiateCheckout', {
+                      content_name: 'Biblioteca completa · Oferta de salida',
+                      value: 5.0,
+                      currency: 'USD',
+                    });
+                  }
+                } catch {}
+              }}
             >
               SÍ, QUIERO MI BIBLIOTECA POR US$5
             </a>
