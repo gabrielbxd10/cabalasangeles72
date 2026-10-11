@@ -1,0 +1,6 @@
+{
+  "name": "Los 72 Ángeles de la Cábala · Guía Digital",
+  "description": "Descubre los 72 Ángeles de la Cábala en una guía visual de 75 páginas con muestras reales y 8 bonos digitales exclusivos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
