@@ -309,25 +309,6 @@ export default function App() {
     };
   }, []);
 
-  // Exit intent trigger
-  useEffect(() => {
-    let triggered = false;
-    const onMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 10 && !triggered) {
-        triggered = true;
-        try {
-          if (sessionStorage.getItem('angeles-exit-dismissed') !== 'true') {
-            setShowExitModal(true);
-          }
-        } catch {
-          setShowExitModal(true);
-        }
-      }
-    };
-    document.addEventListener('mouseleave', onMouseLeave);
-    return () => document.removeEventListener('mouseleave', onMouseLeave);
-  }, []);
-
   // Keyboard navigation for image viewer
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -385,10 +366,24 @@ export default function App() {
               <li>Material digital para cualquier dispositivo</li>
             </ul>
             <div className="actions">
-              <a className="button" href="#planes">
+              <a
+                className="button"
+                href="#muestras"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('muestras')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 QUIERO CONOCER LOS 72 ÁNGELES
               </a>
-              <a className="textlink" href="#muestras">
+              <a
+                className="textlink"
+                href="#muestras"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('muestras')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Ver el interior de la guía
               </a>
             </div>
