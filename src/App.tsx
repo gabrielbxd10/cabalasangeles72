@@ -748,6 +748,17 @@ export default function App() {
                   data-plan="Completo · US$9,90"
                   data-value="9.90"
                   href={getCheckoutUrl('6ng3km9t')}
+                  onClick={() => {
+                    try {
+                      if (typeof window !== 'undefined' && (window as any).fbq) {
+                        (window as any).fbq('track', 'InitiateCheckout', {
+                          content_name: 'Los 72 Ángeles',
+                          value: 9.90,
+                          currency: 'USD',
+                        });
+                      }
+                    } catch {}
+                  }}
                 >
                   QUIERO LA BIBLIOTECA COMPLETA POR US$9,90
                 </a>
